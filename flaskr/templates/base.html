@@ -3,12 +3,14 @@
 <link rel="stylesheet" href="../static/style1.css">
 <body>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block javascript %}{% endblock %}
 <nav>
   {% block img %}{% endblock %}
   <ul>
     {% if g.user %}
-      <li class="nome-inicial" onclick="togle('blocklado')"><img class="icone1" src="https://images.vexels.com/media/users/3/147102/isolated/preview/082213cb0f9eabb7e6715f59ef7d322a---cone-do-perfil-do-instagram-by-vexels.png">
-          <p class="text4">{{ g.user['username'] }}</p>
+      <li class="nome-inicial" onclick="togle('blocklado')">
+          <img class="icone1" src="{{ url_for('static', filename='conta.png') }}">
+          <p class="text4" id="usuario">{{ g.user['username'] }}</p>
       </li>
       <!--<li class="btn-logout"><a href="{{ url_for('auth.logout') }}">Log Out</a>-->
     {% else %}
@@ -18,13 +20,13 @@
   </ul>
 </nav>
 <div class="bloco-lado oculto" id="blocklado">
-    <div class="fundo-escurrecido"></div>
-    <div class="fundo-branco"><li class="btn-lado red"><a href="{{ url_for('auth.logout') }}"><p class="text5">Sair</p></a></div>
+    <li class="btn-lado red"><a href="{{ url_for('auth.logout') }}"><p class="text5">Sair</p></a>
 </div>
 <div class="desfoque-tela"></div>
 <section class="content" id="scroll">
     {% block content %}{% endblock %}
+
 </section>
-<p class="text2">2019</p>
+    {% block barraMsg %}{% endblock %}
 <p class="text3">João e Jean</p>
 </body>

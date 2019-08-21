@@ -3,6 +3,9 @@
 {% block header %}
   <h1>{% block title %}| Posts{% endblock %}</h1>
 {% endblock %}
+{% block javascript %}
+    <script src="{{ url_for('static', filename='script2.js') }}"></script>
+{% endblock %}
     {% block img %}
         <img class="logo" src="{{ url_for('static', filename='logo.png') }}">
     {% endblock %}
@@ -15,7 +18,6 @@
           <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">
             <input class="icone" type = "image" src = "{{ url_for('static', filename='icone1.png') }}" alt = "Deletar" />
           </form>
-        </header>
         <p class="body-msg">{{ post['body'] }}</p>
       </article>
     {% endif %}
@@ -24,13 +26,21 @@
           <p class="pessoa-msg"><b>{{ post['username'] }}</b></p>
           <p class="hora-msg">{{ post['created'].strftime('%H:%M') }}</p>
           <p class="body-msg">{{ post['body'] }}</p>
+          {% if g.user['id'] == 1 %}
+            <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">
+                <input class="icone" type = "image" src = "{{ url_for('static', filename='icone1.png') }}" alt = "Deletar" />
+            </form>
+          {% endif %}
       </article>
     {% endif %}
   {% endfor %}
-  <form method="post" class="barra-msg">
+{% endblock %}
+{% block barraMsg %}
+    <form method="post" class="barra-msg">
       <div class="center-block">
-            <textarea class="input-msg" name="body" id="body">{{ request.form['body'] }}</textarea>
-            <input class="btn-msg" type = "image" src = "{{ url_for('static', filename='icone2.png') }}" alt = "Enviar">
+            <textarea class="input-msg" name="body" id="body" autofocus>{{ body }}</textarea>
+            <input class="btn-msg" onclick="localStorage.setItem('campo', '')" type = "image" src = "{{ url_for('static', filename='icone2.png') }}" alt = "Enviar">
       </div>
-  </form>
+    </form>
+        <p class="idUsuario">ID={{g.user['id']}}</p>
 {% endblock %}

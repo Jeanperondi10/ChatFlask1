@@ -12,6 +12,14 @@ from flask.cli import with_appcontext
 
 bp = Blueprint('blog', __name__)
 
+
+
+#def pegarDadosPilha():
+    #cont=len(msgunidpilha)
+    #while (pilha.qsize() != 0):
+    #    msgunidpilha = pilha.get()
+    #    msgpilha[cont]=msgunidpilha
+    #    cont+=1
 @bp.route('/')
 def inicio():
     return render_template('blog/home.html')
@@ -26,6 +34,24 @@ def index():
     ).fetchall()
     return render_template('blog/index.html', posts=posts)
 
+@bp.route('/data')
+def data():
+    #loop persistente que renderizará o template local
+    #FUNCOES: get()-retorna um valor, retirando da pilha
+    #         qsize()-retorna o tamanho da pilha
+
+    #variavel texto q será retornada
+    #template=""
+
+    #print(msgpilha.nome, " | ", g.user['id'])
+    #for msg in msgpilha:
+    #    if msg.nome==g.user['id']:
+    #       print("\n\nPEGANDO MENSAGEM!\nUsuario=", msg.nome, "\n msg= ", msg.msg, "\nTamanho da pilha= ",pilha.qsize())
+    #       template += "<article class='post-normal'><p class='pessoa-msg'><b>" + msg.nome + "</b></p><p class='body-msg'>" + msg.msg + "</p></article>"
+
+
+    #retornar o texto HTML ja formatado
+    return ""
 
 @bp.route('/index', methods=('GET', 'POST'))
 @login_required
@@ -36,20 +62,9 @@ def create():
         error = None
         conta=True
 
-        #db = get_db()
-        #autor = db.execute(
-        #    'SELECT author_id'
-        #    ' FROM post p JOIN user u ON p.author_id = u.id'
-        #    ' ORDER BY created ASC '
-        #).fetchone()
-        #print(autor)
-
-
-            #sif posts[len(posts)-1].author_id == g.user("id"):
-             #   conta=False
-            #else:
-             #   conta=True
-
+        #Objeto que irá fazer o armazenamento dos dados
+        #ATRIBUTOS: Nome do usuario, Corpo da msg e hora
+        #Adicionar na pilha global
 
         if not body:
             error = 'Mensagem Vazia'
@@ -57,6 +72,7 @@ def create():
         if error is not None:
             flash(error)
         else:
+
             db = get_db()
             db.execute(
                 'INSERT INTO post (body, author_id, cont)'
@@ -64,6 +80,16 @@ def create():
                 (body, g.user['id'], conta)
             )
             db.commit()
+
+            ##########################
+            # Pegar o nome do usuario
+            #mensagem.nome=g.user['id']
+            #mensagem.msg = body
+            #pilha.put(mensagem)
+            #data()
+            #print("NOVA MENSAGEM!\nUsuario=",mensagem.nome,"\n msg= ",mensagem.msg,"\nTamanho da pilha= ",pilha.qsize())
+            ##########################
+
             return redirect(url_for('blog.index'))
 
     return render_template('blog/create.html')
@@ -79,11 +105,12 @@ def get_post(id, check_author=True):
         (id,)
     ).fetchone()
 
+
     if post is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
 
-    if check_author and post['author_id'] != g.user['id']:
-        abort(403)
+    #if check_author and post['author_id'] != g.user['id']:
+     #   abort(403)
 
     return post
 
@@ -114,7 +141,6 @@ def update(id):
     return render_template('blog/update.html', post=post)
 
 @bp.route('/<int:id>/delete', methods=('POST',))
-@login_required
 def delete(id):
     get_post(id)
     db = get_db()
